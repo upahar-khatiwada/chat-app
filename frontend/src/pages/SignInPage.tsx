@@ -4,6 +4,10 @@ import AuthTextField from "./auth_components/AuthTextField";
 import { Mail, Lock } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
 
+  const signInWithGoogle = () => {
+    window.location.href = "http://localhost:3000/auth/google";
+  }
+
 const SignInPage = () => {
   const {
     register,
@@ -59,7 +63,7 @@ const SignInPage = () => {
             <div className="h-px bg-gray-400 flex-1"></div>
           </div>
 
-          <button className="flex items-center justify-center gap-3 bg-gray-100 hover:bg-gray-200 transition-colors p-4 rounded-full shadow-sm w-full max-w-md cursor-pointer">
+          <button onClick={signInWithGoogle} className="flex items-center justify-center gap-3 bg-gray-100 hover:bg-gray-200 transition-colors p-4 rounded-full shadow-sm w-full max-w-md cursor-pointer">
             <FaGoogle className="text-2xl text-amber-900" />
             <span className="text-lg font-semibold text-amber-800">Sign In with Google</span>
           </button>
