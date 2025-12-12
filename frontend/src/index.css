@@ -2,5 +2,15 @@
 @plugin 'tailwind-scrollbar';
 
 body {
-    @apply bg-gray-200 text-white;
+    @apply bg-[#4A3728] text-white;
+}
+
+input:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #3f301d inset !important;
+  -webkit-text-fill-color: white !important;
+}
+
+input:-webkit-autofill:focus {
+  box-shadow: 0 0 0 1000px #1f2937 inset !important;
+  -webkit-text-fill-color: white !important;
 }

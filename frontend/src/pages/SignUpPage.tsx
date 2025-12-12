@@ -20,7 +20,7 @@ const SignUpPage = () => {
       <AuthNavbar />
 
       <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-62px)]">
-        <div className="bg-gray-600 p-2 border border-none rounded-xl">
+        <div className="bg-[#795C34] p-2 border border-none rounded-xl">
           <CiChat2 className="text-white text-4xl" />
         </div>
         <div className="flex flex-col mx-auto items-center">
@@ -76,7 +76,7 @@ const SignUpPage = () => {
 
           <button
             type="submit"
-            className="bg-blue-600 text-white p-2 rounded mt-2 cursor-pointer"
+            className="bg-linear-to-r from-[#231709] to-[#4A2511] text-white p-2 rounded mt-2 cursor-pointer"
           >
             Sign Up
           </button>

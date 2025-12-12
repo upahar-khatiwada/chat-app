@@ -24,14 +24,14 @@ export default function AuthTextField({
 
       <div className="relative">
         {Icon && (
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-200" />
         )}
 
         <input
           type={type}
           placeholder={placeholder}
           {...register}
-          className={`border p-2 rounded w-full ${Icon ? "pl-10" : ""}`}
+          className={`border p-2 rounded w-full focus:outline-none ${Icon ? "pl-10" : ""}`}
         />
       </div>
 

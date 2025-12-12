@@ -3,7 +3,7 @@ import { CiMenuBurger } from "react-icons/ci";
 import { users } from "../data/dummy_data";
 
 const SidebarDrawer = () => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
 
   const handleCheckBoxTicked = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,13 +11,13 @@ const SidebarDrawer = () => {
   };
 
   return (
-    <div className="flex h-[calc(100vh-62px)]">
+    <div className="flex h-[calc(100vh-62px)] border rounded-2xl overflow-hidden border-none sticky">
       <div
-        className={`bg-gray-800 text-white transition-all duration-300 
-              ${open ? "w-72" : "w-20"} flex flex-col px-2`}
+        className={`bg-linear-to-r from-[#231709] to-[#4A2511] text-white transition-all duration-300 
+              ${open ? "w-82" : "w-20"} flex flex-col px-2`}
       >
         <button
-          className={`py-2 flex items-center gap-3 hover:bg-gray-700 hover:rounded-xl transition-colors duration-200 ${
+          className={`py-2 flex items-center gap-3 hover:bg-[#704026] hover:rounded-xl transition-colors duration-200 ${
             !open && "justify-center"
           }`}
           onClick={() => setOpen(!open)}
@@ -32,22 +32,23 @@ const SidebarDrawer = () => {
               type="checkbox"
               className="w-5 h-5 accent-blue-600 border-gray-300 rounded"
               onChange={handleCheckBoxTicked}
+              checked={checkBoxTicked}
             />
             <span className="text-sm">Show only online users</span>
           </label>
         )}
 
         <div
-          className="mt-4 flex flex-col gap-2 overflow-y-auto 
+          className="mt-1 flex flex-col gap-2 overflow-y-auto 
                   scrollbar-thumb-rounded-full scrollbar-thin 
-                  scrollbar-thumb-slate-400 scrollbar-track-transparent"
+                  scrollbar-thumb-[#704026] scrollbar-track-transparent"
         >
           {users
             .filter((user) => !checkBoxTicked || user.online)
             .map((user) => (
               <div
                 key={user.id}
-                className="flex items-center gap-2 p-2 hover:bg-gray-700 hover:rounded-xl transition-all duration-200 cursor-pointer relative"
+                className="flex items-center gap-2 p-2 hover:bg-[#704026] hover:rounded-xl transition-all duration-200 cursor-pointer relative"
               >
                 <img
                   src={user.profileImage}

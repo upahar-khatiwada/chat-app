@@ -51,7 +51,7 @@ const SignInPage = () => {
 
           <button
             type="submit"
-            className="bg-blue-600 text-white p-2 rounded mt-2 cursor-pointer"
+            className="bg-linear-to-r from-[#231709] to-[#4A2511] text-white p-2 rounded mt-2 cursor-pointer"
           >
             Sign In
           </button>
