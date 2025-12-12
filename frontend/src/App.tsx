@@ -1,18 +1,46 @@
 // import ProtectedRoute from "./components/ProtectedRoute";
+import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import { Routes, Route } from "react-router-dom";
+import type User from "./interfaces/user_interface";
 
 const App = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/auth/me", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data.user);
+        setLoading(false);
+      });
+  }, []);
+
   return (
     <>
       <Routes>
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route
+          path="/profile"
+          element={
+            loading ? (
+              <div className="flex items-center justify-center">Loading...</div>
+            ) : user ? (
+              <ProfilePage user={user} />
+            ) : (
+              <SignInPage />
+            )
+          }
+        />
+
         <Route path="*" element={<HomePage />} />
         {/* <Route
           path="/home"
