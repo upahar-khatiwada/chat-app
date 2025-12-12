@@ -1,8 +1,8 @@
 import { CiChat2 } from "react-icons/ci";
-import Navbar from "../components/Navbar";
 import AuthTextField from "./auth_components/AuthTextField";
 import { User, Mail, Lock } from "lucide-react";
 import { useForm, type FieldValues } from "react-hook-form";
+import AuthNavbar from "./auth_components/AuthNavBar";
 
 const SignUpPage = () => {
   const {
@@ -17,7 +17,7 @@ const SignUpPage = () => {
 
   return (
     <>
-      <Navbar />
+      <AuthNavbar />
 
       <div className="flex flex-col gap-4 items-center justify-center min-h-[calc(100vh-62px)]">
         <div className="bg-gray-600 p-2 border border-none rounded-xl">

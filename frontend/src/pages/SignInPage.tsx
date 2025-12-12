@@ -1,8 +1,8 @@
-import Navbar from "../components/Navbar";
 import { useForm, type FieldValues } from "react-hook-form";
 import AuthTextField from "./auth_components/AuthTextField";
 import { Mail, Lock } from "lucide-react";
 import { FaGoogle } from "react-icons/fa";
+import AuthNavbar from "./auth_components/AuthNavBar";
 
   const signInWithGoogle = () => {
     window.location.href = "http://localhost:3000/auth/google";
@@ -21,7 +21,7 @@ const SignInPage = () => {
 
   return (
     <>
-      <Navbar />
+      <AuthNavbar />
 
       <div className="flex flex-col gap-10 items-center justify-center min-h-[calc(100vh-62px)]">
         <h1 className="text-3xl font-bold">Sign In</h1>
