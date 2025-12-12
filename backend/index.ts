@@ -44,10 +44,10 @@ app.get(
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:5173/signin",
+    failureRedirect: "http://localhost:4000/signin",
   }),
   (req, res) => {
-    res.redirect("http://localhost:5173/home");
+    res.redirect("http://localhost:4000/home");
   }
 );
 

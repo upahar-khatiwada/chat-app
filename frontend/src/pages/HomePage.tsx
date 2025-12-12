@@ -46,15 +46,21 @@
 
 // export default HomePage;
 
-import React from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from "../components/Navbar";
+import SideBarDrawer from "../components/SideBarDrawer";
 
 const HomePage = () => {
   return (
     <>
-    <Navbar />
-    <div>HomePage</div></>
-  )
-}
+      <Navbar />
+      <div className="flex w-full min-h-[calc(100vh-62px)]">
+        {/* this is the sidebar */}
+        <SideBarDrawer />
+        {/* this is the main chat */}
+        <div className="w-full bg-red-200"></div>
+      </div>
+    </>
+  );
+};
 
-export default HomePage
+export default HomePage;
