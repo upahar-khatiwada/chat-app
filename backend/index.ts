@@ -6,6 +6,7 @@ import passport from "passport";
 import session from "express-session";
 import cors from "cors";
 import googleAuthRoute from "./routes/google_auth_route";
+import messageRoute from "./routes/message_route";
 
 const app = express();
 
@@ -16,6 +17,9 @@ app.use(
     credentials: true,
   })
 );
+
+// json middleware
+app.use(express.json());
 
 // session middleware
 app.use(
@@ -36,6 +40,7 @@ app.use(passport.session());
 
 // routes
 app.use("/auth", googleAuthRoute);
+app.use("/messages", messageRoute);
 
 const PORT: number = Number(process.env.PORT);
 

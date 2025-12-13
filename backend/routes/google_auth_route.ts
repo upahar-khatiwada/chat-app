@@ -1,17 +1,13 @@
 import express from "express";
 import passport from "passport";
-import {
-  googleAuth,
-  googleCallback,
-  getMe,
-} from "../controllers/google_auth_controller";
+import { googleCallback, getMe } from "../controllers/google_auth_controller";
+import { protectRoute } from "../middlewares/protect_route_middleware";
 
 const router = express.Router();
 
 router.get(
   "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] }),
-  googleAuth()
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
 router.get(
@@ -19,9 +15,9 @@ router.get(
   passport.authenticate("google", {
     failureRedirect: "http://localhost:4000/signin",
   }),
-  googleCallback()
+  googleCallback
 );
 
-router.get("/me", getMe);
+router.get("/me", protectRoute, getMe);
 
 export default router;

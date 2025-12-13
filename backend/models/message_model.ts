@@ -1,7 +1,9 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 import type { IMessage } from "../types/interface_message";
 
-export interface IMessageDocument extends IMessage, Document {}
+export interface IMessageDocument extends IMessage, Document {
+  replyTo?: Types.ObjectId;
+}
 
 const messageSchema = new Schema<IMessageDocument>(
   {
@@ -20,6 +22,11 @@ const messageSchema = new Schema<IMessageDocument>(
     },
     image: {
       type: String,
+    },
+    replyTo: {
+      type: Schema.Types.ObjectId,
+      ref: "Message",
+      default: null,
     },
   },
   { timestamps: true }
