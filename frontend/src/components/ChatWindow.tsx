@@ -2,8 +2,17 @@ import { useState } from "react";
 import { MdAttachFile } from "react-icons/md";
 import { IoMdSend } from "react-icons/io";
 import ChatHeader from "./ChatHeader";
+import type User from "../interfaces/user_interface";
 
-export default function ChatWindow() {
+interface ChatWindowProps {
+  userChattingWith: User;
+  setUserChattingWith: (user: User | null) => void;
+}
+
+export default function ChatWindow({
+  userChattingWith,
+  setUserChattingWith,
+}: ChatWindowProps) {
   const [message, setMessage] = useState("");
 
   const myAvatar: string =
@@ -113,7 +122,10 @@ export default function ChatWindow() {
   return (
     <div className="flex-1 h-[calc(100vh-62px)] flex flex-col border rounded-2xl overflow-hidden border-none bg-white">
       <div className="bg-linear-to-r from-[#231709] to-[#4A2511] text-white">
-        <ChatHeader />
+        <ChatHeader
+          userChattingWith={userChattingWith}
+          setUserChattingWith={setUserChattingWith}
+        />
       </div>
 
       <div

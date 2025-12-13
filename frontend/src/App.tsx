@@ -1,4 +1,4 @@
-// import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import ProfilePage from "./pages/ProfilePage";
@@ -42,7 +42,6 @@ const App = () => {
             </PublicRoute>
           }
         />
-        <Route path="/home" element={<HomePage />} />
         <Route
           path="/profile"
           element={
@@ -55,17 +54,15 @@ const App = () => {
             )
           }
         />
-
-        <Route path="*" element={<HomePage />} />
-        {/* <Route
+        <Route
           path="/home"
           element={
             <ProtectedRoute>
               <HomePage />
             </ProtectedRoute>
           }
-        /> */}
-        {/* <Route path="*" element={<SignInPage />} /> */}
+        />
+        <Route path="*" element={<SignInPage />} />
       </Routes>
     </>
   );

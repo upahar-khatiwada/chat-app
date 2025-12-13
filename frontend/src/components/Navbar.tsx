@@ -18,12 +18,15 @@ const Navbar = () => {
           </Link>
 
           <div className="flex relative items-center">
-            <CiSearch size={25} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-200" />
+            <CiSearch
+              size={25}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-200"
+            />
             <input
-            type="text"
-            placeholder="Search for a user..."
-            className="pl-10 pr-4 py-3 rounded-xl placeholder-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#d6c7bc]"
-          />
+              type="text"
+              placeholder="Search for a user..."
+              className="pl-10 pr-4 py-3 rounded-xl placeholder-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#d6c7bc]"
+            />
           </div>
 
           <div className="flex items-center gap-5">
@@ -40,7 +43,19 @@ const Navbar = () => {
               </div>
             </Link>
 
-            <div className="flex items-center cursor-pointer gap-1 px-3 py-1 rounded-lg hover:scale-105 transition-transform duration-200 hover:bg-red-400">
+            <div
+              onClick={async () => {
+                const res = await fetch("http://localhost:3000/auth/logout", {
+                  credentials: "include",
+                  method: "POST",
+                });
+
+                if (res.ok) {
+                  window.location.href = "/signin";
+                }
+              }}
+              className="flex items-center cursor-pointer gap-1 px-3 py-1 rounded-lg hover:scale-105 transition-transform duration-200 hover:bg-red-400"
+            >
               <IoIosLogOut className="text-2xl" />
               <span className="text-2xl">Log Out</span>
             </div>

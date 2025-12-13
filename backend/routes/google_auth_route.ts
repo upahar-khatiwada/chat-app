@@ -1,6 +1,6 @@
 import express from "express";
 import passport from "passport";
-import { googleCallback, getMe } from "../controllers/google_auth_controller";
+import { googleCallback, getMe, logout } from "../controllers/google_auth_controller";
 import { protectRoute } from "../middlewares/protect_route_middleware";
 
 const router = express.Router();
@@ -17,6 +17,8 @@ router.get(
   }),
   googleCallback
 );
+
+router.post("/logout", protectRoute, logout);
 
 router.get("/me", protectRoute, getMe);
 

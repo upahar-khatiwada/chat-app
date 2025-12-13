@@ -1,19 +1,32 @@
 import { type Request, type Response } from "express";
 import type { Types } from "mongoose";
-import { User } from "../models/user_model";
+import { Message } from "../models/message_model";
 
-export const getAllUsers = async (req: Request, res: Response) => {
+export const getMessages = (req: Request, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
+    const { otherUserId } = req.params;
 
-    const loggedInUserId: Types.ObjectId | undefined = req.user._id;
-    const otherUsers = await User.find({ _id: { $ne: loggedInUserId } });
+    if (!otherUserId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "otherUserId is required" });
+    }
 
-    res.status(200).json(otherUsers);
+    const myId: Types.ObjectId = req.user?._id;
+
+    const messages = Message.find({
+      $or: [
+        { senderId: myId, receiverId: otherUserId },
+        { senderId: otherUserId, receiverId: myId },
+      ],
+    });
+
+    res.status(200).json(messages);
   } catch (err) {
-    console.error("Error in getAllUsers: ", err);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.log("Error in getMessages: ", err);
+    res.status(500).json({ success: false, error: "Internal server error" });
   }
 };

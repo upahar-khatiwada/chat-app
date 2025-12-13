@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
 
-const SidebarDrawer = () => {
+interface SideBarDrawerProps {
+  onChatSelect: (user: User) => void;
+}
+
+const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const [open, setOpen] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
   // const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
@@ -12,7 +16,7 @@ const SidebarDrawer = () => {
   // };
 
   useEffect(() => {
-    fetch("http://localhost:3000/messages/users", {
+    fetch("http://localhost:3000/api/users", {
       credentials: "include",
     })
       .then((res) => {
@@ -67,6 +71,7 @@ const SidebarDrawer = () => {
             // .filter((user) => !checkBoxTicked || user.online)
             .map((user) => (
               <div
+                onClick={() => onChatSelect(user)}
                 key={user._id}
                 className="flex items-center gap-2 p-2 hover:bg-[#704026] hover:rounded-xl transition-all duration-200 cursor-pointer relative"
               >
