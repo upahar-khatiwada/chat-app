@@ -6,7 +6,7 @@ export const protectRoute = (
   next: NextFunction
 ) => {
   if (req.isAuthenticated()) {
-    console.log(req.user);
+    // console.log(req.user);
     return next();
   }
 

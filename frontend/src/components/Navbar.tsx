@@ -2,6 +2,7 @@ import { CiChat2, CiSearch } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 import { Link, useLocation } from "react-router-dom";
+import { getSocket } from "../socket";
 
 const Navbar = () => {
   const location = useLocation();
@@ -45,6 +46,12 @@ const Navbar = () => {
 
             <div
               onClick={async () => {
+                const socket = getSocket();
+
+                if (socket) {
+                  socket.disconnect();
+                }
+
                 const res = await fetch("http://localhost:3000/auth/logout", {
                   credentials: "include",
                   method: "POST",

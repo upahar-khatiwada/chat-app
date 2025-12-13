@@ -1,12 +1,9 @@
 import Navbar from "../components/Navbar";
 import { CiCamera } from "react-icons/ci";
-import type User from "../interfaces/user_interface";
+import useAuth from "../context/AuthContext";
 
-interface PropsInterface {
-  user: User | null;
-}
-
-const ProfilePage = ({ user }: PropsInterface) => {
+const ProfilePage = () => {
+  const { user } = useAuth();
   return (
     <>
       <Navbar />

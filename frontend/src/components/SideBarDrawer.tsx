@@ -1,21 +1,34 @@
 import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
+import useAuth from "../context/AuthContext";
+import { connectSocket } from "../socket";
 
 interface SideBarDrawerProps {
   onChatSelect: (user: User) => void;
 }
 
 const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
+  const { user } = useAuth();
+
   const [open, setOpen] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
-  // const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+  const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
 
-  // const handleCheckBoxTicked = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   setCheckBoxTicked(e.target.checked);
-  // };
+  const handleCheckBoxTicked = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckBoxTicked(e.target.checked);
+  };
 
   useEffect(() => {
+    if (!user) return;
+
+    const socket = connectSocket(user._id);
+
+    socket.on("allOnlineUsers", (onlineUserIds: string[]) => {
+      setOnlineUsers(onlineUserIds);
+    });
+
     fetch("http://localhost:3000/api/users", {
       credentials: "include",
     })
@@ -30,7 +43,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
       .catch((err) => {
         console.error(err);
       });
-  }, []);
+  }, [user]);
 
   console.log(users);
 
@@ -50,7 +63,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
           {open && <span className="font-bold text-2xl">Contacts</span>}
         </button>
 
-        {/* {open && (
+        {open && (
           <label className="flex items-center gap-2 cursor-pointer mt-2 mx-1">
             <input
               type="checkbox"
@@ -60,7 +73,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
             />
             <span className="text-sm">Show only online users</span>
           </label>
-        )} */}
+        )}
 
         <div
           className="mt-1 flex flex-col gap-2 overflow-y-auto 
@@ -68,7 +81,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                   scrollbar-thumb-[#704026] scrollbar-track-transparent"
         >
           {users
-            // .filter((user) => !checkBoxTicked || user.online)
+            .filter((user) => !checkBoxTicked || onlineUsers.includes(user._id))
             .map((user) => (
               <div
                 onClick={() => onChatSelect(user)}
@@ -85,14 +98,13 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                   <div>
                     <p className="font-semibold">{user.fullName}</p>
                     <span className="text-sm text-gray-400">
-                      Offline
-                      {/* {user.online ? "Online" : "Offline"} */}
+                      {onlineUsers.includes(user._id) ? "Online" : "Offline"}
                     </span>
                   </div>
                 )}
-                {/* {user.online && (
+                {onlineUsers.includes(user._id) && (
                   <div className="absolute bg-green-400 border-none rounded-full w-2.5 h-2.5 bottom-3 left-9"></div>
-                )} */}
+                )}
               </div>
             ))}
         </div>

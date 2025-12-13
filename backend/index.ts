@@ -8,8 +8,7 @@ import cors from "cors";
 import googleAuthRoute from "./routes/google_auth_route";
 import userRoute from "./routes/user_route";
 import messageRoute from "./routes/message_route";
-
-const app = express();
+import {app, server} from "./config/socket";
 
 // cors middleware
 app.use(
@@ -58,7 +57,7 @@ app.get("/dashboard", (req, res) => {
   res.send("Logged in successfully!");
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   connectToMongoDB();
   console.log(`Server running on http://localhost:${PORT}`);
 });
