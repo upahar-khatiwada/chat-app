@@ -6,6 +6,7 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import { Routes, Route } from "react-router-dom";
 import type User from "./interfaces/user_interface";
+import PublicRoute from "./components/PublicRoute";
 
 const App = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -25,8 +26,22 @@ const App = () => {
   return (
     <>
       <Routes>
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
+        <Route
+          path="/signin"
+          element={
+            <PublicRoute user={user}>
+              <SignInPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute user={user}>
+              <SignUpPage />
+            </PublicRoute>
+          }
+        />
         <Route path="/home" element={<HomePage />} />
         <Route
           path="/profile"
