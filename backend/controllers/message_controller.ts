@@ -55,20 +55,10 @@ export const sendMessage = async (req: Request, res: Response) => {
     });
 
     const socketIdOfReceiver = getSocketIdOfUser(receiverId);
-    if (!socketIdOfReceiver) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Socket Id Of Receiver not found." });
+    if (socketIdOfReceiver) {
+      io.to(socketIdOfReceiver).emit("message", message);
     }
-
-    io.to(socketIdOfReceiver).emit("message", message);
-
-    // sending message back to sender as well as it was not showing sender's message on sender side
-    // const socketIdOfSender = getSocketIdOfUser(senderId.toString());
-    // if (socketIdOfSender) {
-    //   io.to(socketIdOfSender).emit("message", message);
-    // }
-
+    
     res.status(200).json(message);
   } catch (err) {
     console.log("Error in sendMessage: ", err);
