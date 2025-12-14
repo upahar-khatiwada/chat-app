@@ -9,7 +9,7 @@ interface PublicRouteProps {
 }
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
-  const user = useAuth();
+  const { user } = useAuth();
 
   if (user) {
     return <Navigate to="/home" replace />;

@@ -9,7 +9,7 @@ interface SideBarDrawerProps {
 }
 
 const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
-  const user = useAuth();
+  const { user } = useAuth();
 
   const [open, setOpen] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);

@@ -6,18 +6,18 @@ import { CiChat2 } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
 import { connectSocket } from "../socket";
 import { useAuth } from "../context/AuthContext";
-import { toast } from "sonner";
-import { useSearchParams } from "react-router";
+// import { toast } from "sonner";
+// import { useSearchParams } from "react-router";
 
 const HomePage = () => {
-  const user = useAuth();
+  const { user } = useAuth();
   console.log(user);
   const [selectedChat, setSelectedChat] = useState<User | null>(null);
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
 
-  if (searchParams.get("success")) {
-    toast("✔ Logged in successfully");
-  }
+  // if (searchParams.get("success")) {
+  //   toast("✔ Logged in successfully");
+  // }
   useEffect(() => {
     if (!user) return;
 

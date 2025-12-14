@@ -30,7 +30,7 @@ export default function ChatWindow({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
   const messageEndRef = useRef<HTMLDivElement | null>(null);
-  const user = useAuth();
+  const { user } = useAuth();
 
   const isSendDisabled = !message.trim();
 

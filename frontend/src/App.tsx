@@ -8,18 +8,6 @@ import { Toaster } from "sonner";
 import { AuthProvider } from "./context/AuthContext";
 
 const App = () => {
-  // const [user, setUser] = useState<User | null>(null);
-
-  // useEffect(() => {
-  //   fetch("http://localhost:3000/auth/me", {
-  //     credentials: "include",
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setUser(data.user);
-  //     });
-  // }, []);
-
   return (
     <>
       <AuthProvider>

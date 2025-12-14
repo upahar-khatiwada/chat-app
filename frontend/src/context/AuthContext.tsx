@@ -1,11 +1,17 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type User from "../interfaces/user_interface";
+import { toast } from "sonner";
 
-const AuthContext = createContext<User | null>(null);
+type AuthContextType = {
+  user: User | null;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (ctx === undefined) throw new Error("useAuth must be used inside AuthProvider");
+  if (ctx === undefined)
+    throw new Error("useAuth must be used inside AuthProvider");
   return ctx;
 };
 
@@ -22,10 +28,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUser(data.user);
+        if (data.user) {
+          setUser(data.user);
+          toast("✔ Logged in successfully");
+        }
       });
   }, []);
 
-  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+  );
   // return <AuthContext.Provider value={user}><h1>Hello from auth</h1></AuthContext.Provider>;
 };

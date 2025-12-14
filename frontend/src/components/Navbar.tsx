@@ -3,6 +3,7 @@ import { FaRegUser } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
 import { Link, useLocation } from "react-router";
 import { getSocket } from "../socket";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const location = useLocation();
@@ -60,6 +61,8 @@ const Navbar = () => {
                 if (res.ok) {
                   window.location.href = "/signin";
                 }
+
+                toast("✔ Logged Out successfully");
               }}
               className="flex items-center cursor-pointer gap-1 px-3 py-1 rounded-lg hover:scale-105 transition-transform duration-200 hover:bg-red-400"
             >
