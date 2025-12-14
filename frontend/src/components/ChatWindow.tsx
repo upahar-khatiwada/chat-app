@@ -9,6 +9,8 @@ import {
 } from "../helper/message_api_helper";
 import { useAuth } from "../context/AuthContext";
 import { getSocket } from "../socket";
+import MessageSkeleton from "./skeletons/MessageSkeleton";
+import ChatHeaderSkeleton from "./skeletons/ChatHeaderSkeleton";
 
 interface ChatWindowProps {
   userChattingWith: User;
@@ -29,6 +31,8 @@ export default function ChatWindow({
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuth();
 
@@ -50,10 +54,13 @@ export default function ChatWindow({
 
     const fetchMessages = async () => {
       try {
+        setLoading(true);
         const data = await getMessagesApi(userChattingWith._id);
         setMessages(data);
       } catch (err) {
         console.error(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -89,66 +96,84 @@ export default function ChatWindow({
   return (
     <div className="flex-1 h-[calc(100vh-62px)] flex flex-col border rounded-2xl overflow-hidden border-none bg-white">
       <div className="bg-linear-to-r from-[#231709] to-[#4A2511] text-white">
-        <ChatHeader
-          userChattingWith={userChattingWith}
-          setUserChattingWith={setUserChattingWith}
-        />
+        {loading ? (
+          <ChatHeaderSkeleton />
+        ) : (
+          <ChatHeader
+            userChattingWith={userChattingWith}
+            setUserChattingWith={setUserChattingWith}
+          />
+        )}
       </div>
 
       <div
         className="flex-1 p-4 overflow-y-auto bg-[#beafa3] space-y-3 scrollbar-thumb-rounded-full scrollbar-thin 
                   scrollbar-thumb-[#e7d2c7] scrollbar-track-transparent"
       >
-        {messages.map((msg) => {
-          const isMe = msg.senderId === user?._id;
+        {loading ? (
+          <>
+            <MessageSkeleton />
+            <MessageSkeleton isMe />
+            <MessageSkeleton />
+            <MessageSkeleton isMe />
+            <MessageSkeleton />
+          </>
+        ) : (
+          messages.map((msg) => {
+            const isMe = msg.senderId === user?._id;
 
-          return (
-            <div
-              key={msg._id}
-              className={`flex gap-2 ${isMe ? "justify-end" : "justify-start"}`}
-            >
-              {!isMe && (
-                <img
-                  src={userChattingWith.avatar}
-                  className="w-10 h-10 rounded-full mt-1"
-                />
-              )}
+            return (
               <div
-                className={`flex flex-col ${
-                  isMe ? "items-end" : "items-start"
+                key={msg._id}
+                className={`flex gap-2 ${
+                  isMe ? "justify-end" : "justify-start"
                 }`}
               >
+                {!isMe && (
+                  <img
+                    src={userChattingWith.avatar}
+                    className="w-10 h-10 rounded-full mt-1"
+                  />
+                )}
                 <div
-                  className={`max-w-[200px] w-fit p-3 rounded-xl text-sm shadow-sm ${
-                    isMe ? "bg-[#A67C52] text-white" : "bg-[#8B5E34] text-white"
+                  className={`flex flex-col ${
+                    isMe ? "items-end" : "items-start"
                   }`}
                 >
-                  {msg.text}
+                  <div
+                    className={`max-w-[200px] w-fit p-3 rounded-xl text-sm shadow-sm ${
+                      isMe
+                        ? "bg-[#A67C52] text-white"
+                        : "bg-[#8B5E34] text-white"
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                  <span
+                    className={`text-xs opacity-70 mt-1 ${
+                      isMe ? "text-white font-bold" : "text-[#6b4c2e] font-bold"
+                    }`}
+                  >
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
-                <span
-                  className={`text-xs opacity-70 mt-1 ${
-                    isMe ? "text-white font-bold" : "text-[#6b4c2e] font-bold"
-                  }`}
-                >
-                  {new Date(msg.createdAt).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
+                {isMe && (
+                  <img
+                    src={user?.avatar}
+                    alt="My avatar"
+                    className="w-10 h-10 rounded-full mt-1"
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                )}
               </div>
-              {isMe && (
-                <img
-                  src={user?.avatar}
-                  alt="My avatar"
-                  className="w-10 h-10 rounded-full mt-1"
-                  onError={(e) => {
-                    e.currentTarget.style.display = "none";
-                  }}
-                />
-              )}
-            </div>
-          );
-        })}
+            );
+          })
+        )}
         <div ref={messageEndRef} />
       </div>
 

@@ -3,6 +3,7 @@ import { CiMenuBurger } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
 import { useAuth } from "../context/AuthContext";
 import { connectSocket } from "../socket";
+import SideBarSkeleton from "./skeletons/SideBarSkeleton";
 
 interface SideBarDrawerProps {
   onChatSelect: (user: User) => void;
@@ -12,6 +13,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const { user } = useAuth();
 
   const [open, setOpen] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [users, setUsers] = useState<User[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
@@ -31,20 +33,23 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   }, [user]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/users", {
-      credentials: "include",
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error occured while fetching a user");
-        return res.json();
-      })
-      .then((data) => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("http://localhost:3000/api/users", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Error fetching users");
+        const data = await res.json();
         setUsers(data);
-        // console.log(data);
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error(err);
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
   }, []);
 
   // console.log(users);
@@ -65,7 +70,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
           {open && <span className="font-bold text-2xl">Contacts</span>}
         </button>
 
-        {open && (
+        {open && !loading && (
           <label className="flex items-center gap-2 cursor-pointer mt-2 mx-1">
             <input
               type="checkbox"
@@ -82,33 +87,41 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                   scrollbar-thumb-rounded-full scrollbar-thin 
                   scrollbar-thumb-[#704026] scrollbar-track-transparent"
         >
-          {users
-            .filter((user) => !checkBoxTicked || onlineUsers.includes(user._id))
-            .map((user) => (
-              <div
-                onClick={() => onChatSelect(user)}
-                key={user._id}
-                className="flex items-center gap-2 p-2 hover:bg-[#704026] hover:rounded-xl transition-all duration-200 cursor-pointer relative"
-              >
-                <img
-                  src={user.avatar}
-                  alt={user.fullName}
-                  className="w-10 h-10 rounded-full"
-                  referrerPolicy="no-referrer"
-                />
-                {open && (
-                  <div>
-                    <p className="font-semibold">{user.fullName}</p>
-                    <span className="text-sm text-gray-400">
-                      {onlineUsers.includes(user._id) ? "Online" : "Offline"}
-                    </span>
+          {loading
+            ? Array(12)
+                .fill(0)
+                .map((_, i) => <SideBarSkeleton key={i} open={open} />)
+            : users
+                .filter(
+                  (user) => !checkBoxTicked || onlineUsers.includes(user._id)
+                )
+                .map((user) => (
+                  <div
+                    onClick={() => onChatSelect(user)}
+                    key={user._id}
+                    className="flex items-center gap-2 p-2 hover:bg-[#704026] hover:rounded-xl transition-all duration-200 cursor-pointer relative"
+                  >
+                    <img
+                      src={user.avatar}
+                      alt={user.fullName}
+                      className="w-10 h-10 rounded-full"
+                      referrerPolicy="no-referrer"
+                    />
+                    {open && (
+                      <div>
+                        <p className="font-semibold">{user.fullName}</p>
+                        <span className="text-sm text-gray-400">
+                          {onlineUsers.includes(user._id)
+                            ? "Online"
+                            : "Offline"}
+                        </span>
+                      </div>
+                    )}
+                    {onlineUsers.includes(user._id) && (
+                      <div className="absolute bg-green-400 border-none rounded-full w-2.5 h-2.5 bottom-3 left-9"></div>
+                    )}
                   </div>
-                )}
-                {onlineUsers.includes(user._id) && (
-                  <div className="absolute bg-green-400 border-none rounded-full w-2.5 h-2.5 bottom-3 left-9"></div>
-                )}
-              </div>
-            ))}
+                ))}
         </div>
       </div>
     </div>
