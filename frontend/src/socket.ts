@@ -4,7 +4,7 @@ let socket: Socket | null = null;
 
 export const connectSocket = (userId: string) => {
   if (!socket) {
-    socket = io("http://localhost:3000", {
+    socket = io(import.meta.env.VITE_BASE_URL, {
       auth: {
         userId,
       },

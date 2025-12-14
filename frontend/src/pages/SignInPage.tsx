@@ -5,7 +5,7 @@ import { FaGoogle } from "react-icons/fa";
 import AuthNavbar from "./auth_components/AuthNavBar";
 
   const signInWithGoogle = () => {
-    window.location.href = "http://localhost:3000/auth/google";
+    window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google`;
   }
 
 const SignInPage = () => {

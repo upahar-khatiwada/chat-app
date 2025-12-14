@@ -1,6 +1,6 @@
 export const sendMessagePostApi = async (receiverId: string, text: string) => {
   const response = await fetch(
-    `http://localhost:3000/api/messages/send/${receiverId}`,
+    `${import.meta.env.VITE_BASE_URL}/api/messages/send/${receiverId}`,
     {
       method: "POST",
       credentials: "include",
@@ -24,7 +24,7 @@ export const sendMessagePostApi = async (receiverId: string, text: string) => {
 
 export const getMessagesApi = async (otherUserId: string) => {
   const response = await fetch(
-    `http://localhost:3000/api/messages/get/${otherUserId}`,
+    `${import.meta.env.VITE_BASE_URL}/api/messages/get/${otherUserId}`,
     {
       credentials: "include",
     }

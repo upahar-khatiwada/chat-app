@@ -53,7 +53,7 @@ const Navbar = () => {
                   socket.disconnect();
                 }
 
-                const res = await fetch("http://localhost:3000/auth/logout", {
+                const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
                   credentials: "include",
                   method: "POST",
                 });
