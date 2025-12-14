@@ -17,7 +17,7 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
-  const userId = socket.handshake.auth.userId;
+  const userId: string = socket.handshake.auth.userId;
 
   if (!userId) {
     console.error("No User ID available");
@@ -34,10 +34,15 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     onlineUsers.delete(userId);
     console.log("user disconnected", socket.id);
+
     console.log("User offline:", userId);
 
-    io.emit("allOnlineUsers", Array.from(onlineUsers.keys()));
+    io.emit("allOnlineUsers", [...onlineUsers.keys()]);
   });
 });
+
+export const getSocketIdOfUser = (userId: string): string | undefined => {
+  return onlineUsers.get(userId);
+};
 
 export { io, app, server };

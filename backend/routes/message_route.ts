@@ -4,7 +4,7 @@ import { getMessages, sendMessage } from "../controllers/message_controller";
 
 const router = Router();
 
-router.get("/get/:id", protectRoute, getMessages);
-router.post("/send/:id", protectRoute, sendMessage);
+router.get("/get/:otherUserId", protectRoute, getMessages);
+router.post("/send/:receiverId", protectRoute, sendMessage);
 
 export default router;

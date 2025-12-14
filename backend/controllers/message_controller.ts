@@ -1,8 +1,9 @@
 import { type Request, type Response } from "express";
 import type { Types } from "mongoose";
 import { Message } from "../models/message_model";
+import { getSocketIdOfUser, io } from "../config/socket";
 
-export const getMessages = (req: Request, res: Response) => {
+export const getMessages = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -17,12 +18,12 @@ export const getMessages = (req: Request, res: Response) => {
 
     const myId: Types.ObjectId = req.user?._id;
 
-    const messages = Message.find({
+    const messages = await Message.find({
       $or: [
         { senderId: myId, receiverId: otherUserId },
         { senderId: otherUserId, receiverId: myId },
       ],
-    });
+    }).sort({ createdAt: 1 });
 
     res.status(200).json(messages);
   } catch (err) {
@@ -38,14 +39,35 @@ export const sendMessage = async (req: Request, res: Response) => {
     }
 
     const { textSent } = req.body;
-    const { idOfReceiver } = req.params;
+    const { receiverId } = req.params;
     const senderId = req.user?._id;
+
+    if (!receiverId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Receiver Id not found." });
+    }
 
     const message = await Message.create({
       senderId,
-      receiverId: idOfReceiver,
+      receiverId: receiverId,
       text: textSent,
     });
+
+    const socketIdOfReceiver = getSocketIdOfUser(receiverId);
+    if (!socketIdOfReceiver) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Socket Id Of Receiver not found." });
+    }
+
+    io.to(socketIdOfReceiver).emit("message", message);
+
+    // sending message back to sender as well as it was not showing sender's message on sender side
+    const socketIdOfSender = getSocketIdOfUser(senderId.toString());
+    if (socketIdOfSender) {
+      io.to(socketIdOfSender).emit("message", message);
+    }
 
     res.status(200).json(message);
   } catch (err) {
