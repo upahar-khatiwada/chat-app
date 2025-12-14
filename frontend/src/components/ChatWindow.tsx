@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MdAttachFile } from "react-icons/md";
 import { IoMdSend } from "react-icons/io";
 import ChatHeader from "./ChatHeader";
@@ -7,7 +7,7 @@ import {
   getMessagesApi,
   sendMessagePostApi,
 } from "../helper/message_api_helper";
-import useAuth from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { getSocket } from "../socket";
 
 interface ChatWindowProps {
@@ -29,14 +29,19 @@ export default function ChatWindow({
 }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [message, setMessage] = useState("");
-  const { user } = useAuth();
+  const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const user = useAuth();
 
   const isSendDisabled = !message.trim();
 
   const handleSendMessage = async () => {
     if (!message.trim()) return;
 
-    sendMessagePostApi(userChattingWith._id, message);
+    const res: ChatMessage = await sendMessagePostApi(
+      userChattingWith._id,
+      message
+    );
+    setMessages([...messages, res]);
     setMessage("");
   };
 
@@ -71,6 +76,15 @@ export default function ChatWindow({
       socket?.off("message");
     };
   }, [userChattingWith._id]);
+
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [messages]);
 
   return (
     <div className="flex-1 h-[calc(100vh-62px)] flex flex-col border rounded-2xl overflow-hidden border-none bg-white">
@@ -135,9 +149,7 @@ export default function ChatWindow({
             </div>
           );
         })}
-        {/* {demoMessages.map((msg) => (
-          
-        ))} */}
+        <div ref={messageEndRef} />
       </div>
 
       <div className="flex items-center p-3 sticky bg-[#beafa3]">

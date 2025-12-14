@@ -1,17 +1,31 @@
-import { createContext, useContext } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import type User from "../interfaces/user_interface";
 
-type AuthContextType = {
-  user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
-};
+const AuthContext = createContext<User | null>(null);
 
-export const AuthContext = createContext<AuthContextType | null>(null);
-
-const useAuth = () => {
+export const useAuth = () => {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  if (ctx === undefined) throw new Error("useAuth must be used inside AuthProvider");
   return ctx;
 };
 
-export default useAuth;
+type AuthProviderProps = {
+  children: React.ReactNode;
+};
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/auth/me", {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setUser(data.user);
+      });
+  }, []);
+
+  return <AuthContext.Provider value={user}>{children}</AuthContext.Provider>;
+  // return <AuthContext.Provider value={user}><h1>Hello from auth</h1></AuthContext.Provider>;
+};

@@ -1,7 +1,7 @@
 import { CiChat2, CiSearch } from "react-icons/ci";
 import { FaRegUser } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 import { getSocket } from "../socket";
 
 const Navbar = () => {

@@ -1,7 +1,7 @@
 // This Navbar is only for signin and signup pages
 
 import { CiChat2 } from "react-icons/ci";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 
 const AuthNavbar = () => {
   const location = useLocation();

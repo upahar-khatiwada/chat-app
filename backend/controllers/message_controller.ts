@@ -64,10 +64,10 @@ export const sendMessage = async (req: Request, res: Response) => {
     io.to(socketIdOfReceiver).emit("message", message);
 
     // sending message back to sender as well as it was not showing sender's message on sender side
-    const socketIdOfSender = getSocketIdOfUser(senderId.toString());
-    if (socketIdOfSender) {
-      io.to(socketIdOfSender).emit("message", message);
-    }
+    // const socketIdOfSender = getSocketIdOfUser(senderId.toString());
+    // if (socketIdOfSender) {
+    //   io.to(socketIdOfSender).emit("message", message);
+    // }
 
     res.status(200).json(message);
   } catch (err) {

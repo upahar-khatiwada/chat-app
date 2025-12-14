@@ -6,11 +6,11 @@ body {
 }
 
 input:-webkit-autofill {
-  box-shadow: 0 0 0 1000px #3f301d inset !important;
+  box-shadow: 0 0 0 1000px #4A3728 inset !important;
   -webkit-text-fill-color: white !important;
 }
 
 input:-webkit-autofill:focus {
-  box-shadow: 0 0 0 1000px #1f2937 inset !important;
+  box-shadow: 0 0 0 1000px #4A3728 inset !important;
   -webkit-text-fill-color: white !important;
 }

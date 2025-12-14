@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
-import useAuth from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { connectSocket } from "../socket";
 
 interface SideBarDrawerProps {
@@ -9,7 +9,7 @@ interface SideBarDrawerProps {
 }
 
 const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
-  const { user } = useAuth();
+  const user = useAuth();
 
   const [open, setOpen] = useState<boolean>(true);
   const [users, setUsers] = useState<User[]>([]);
@@ -28,7 +28,9 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
     socket.on("allOnlineUsers", (onlineUserIds: string[]) => {
       setOnlineUsers(onlineUserIds);
     });
+  }, [user]);
 
+  useEffect(() => {
     fetch("http://localhost:3000/api/users", {
       credentials: "include",
     })
@@ -38,14 +40,14 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
       })
       .then((data) => {
         setUsers(data);
-        console.log(data);
+        // console.log(data);
       })
       .catch((err) => {
         console.error(err);
       });
-  }, [user]);
+  }, []);
 
-  console.log(users);
+  // console.log(users);
 
   return (
     <div className="flex h-[calc(100vh-62px)] border rounded-2xl overflow-hidden border-none sticky">

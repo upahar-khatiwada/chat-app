@@ -5,19 +5,26 @@ import SideBarDrawer from "../components/SideBarDrawer";
 import { CiChat2 } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
 import { connectSocket } from "../socket";
-import useAuth from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import { toast } from "sonner";
+import { useSearchParams } from "react-router";
 
 const HomePage = () => {
-  const { user } = useAuth();
+  const user = useAuth();
+  console.log(user);
   const [selectedChat, setSelectedChat] = useState<User | null>(null);
+  const [searchParams] = useSearchParams();
 
+  if (searchParams.get("success")) {
+    toast("✔ Logged in successfully");
+  }
   useEffect(() => {
     if (!user) return;
 
     const socket = connectSocket(user._id);
 
-    socket.on("connect", () => console.log("Connected:", socket.id));
-    socket.on("disconnect", () => console.log("Disconnected"));
+    // socket.on("connect", () => console.log("Connected:", socket.id));
+    // socket.on("disconnect", () => console.log("Disconnected"));
 
     return () => {
       socket.off("connect");
