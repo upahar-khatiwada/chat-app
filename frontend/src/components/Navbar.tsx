@@ -80,7 +80,7 @@ const Navbar = ({ onUserSelect  }: NavbarProps) => {
                         setSearchResults([]);
                       }
                     }
-                    key={user.avatar}
+                    key={user._id}
                     className="px-4 py-2 flex items-center gap-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer"
                   >
                     {user.avatar && (
