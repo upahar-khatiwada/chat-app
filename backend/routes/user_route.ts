@@ -6,6 +6,6 @@ const router = Router();
 
 router.use(protectRoute);
 
-router.get("/users", getAllUsers);
+router.get("/", getAllUsers);
 
 export default router;

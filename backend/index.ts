@@ -41,7 +41,7 @@ app.use(passport.session());
 
 // routes
 app.use("/auth", googleAuthRoute);
-app.use("/api", userRoute);
+app.use("/api/users", userRoute);
 app.use("/api/messages", messageRoute);
 
 const PORT: number = Number(process.env.PORT);

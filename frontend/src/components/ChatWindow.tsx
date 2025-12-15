@@ -41,7 +41,7 @@ export default function ChatWindow({
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
-  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeout = useRef<number | null>(null);
   const { user } = useAuth();
 
   const isSendDisabled = !message.trim();
@@ -57,7 +57,7 @@ export default function ChatWindow({
     typingTimeout.current = setTimeout(() => {
       socket.emit("stopTyping", userChattingWith._id);
       typingTimeout.current = null;
-    }, 1000);
+    }, 2000);
   };
 
   const handleSendMessage = async () => {

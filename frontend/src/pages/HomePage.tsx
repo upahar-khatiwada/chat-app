@@ -34,7 +34,9 @@ const HomePage = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar
+        onUserSelect ={setSelectedChat}
+      />
       <div className="flex w-full h-[calc(100vh-62px)] overflow-hidden pt-1">
         {/* this is the sidebar */}
         <SideBarDrawer onChatSelect={setSelectedChat} />

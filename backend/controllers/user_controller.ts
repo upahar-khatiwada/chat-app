@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
-import type { Types } from "mongoose";
-import { User } from "../models/user_model";
+import type { Types, QueryFilter } from "mongoose";
+import { User, type IUserDocument } from "../models/user_model";
 
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -9,7 +9,15 @@ export const getAllUsers = async (req: Request, res: Response) => {
     }
 
     const loggedInUserId: Types.ObjectId | undefined = req.user._id;
-    const otherUsers = await User.find({ _id: { $ne: loggedInUserId } });
+    const { search } = req.query;
+
+    let filter: QueryFilter<IUserDocument> = { _id: { $ne: loggedInUserId } };
+
+    if (search && typeof search === "string") {
+      filter.fullName = { $regex: search, $options: "i" };
+    }
+
+    const otherUsers = await User.find(filter, "fullName email _id avatar").limit(20);
 
     res.status(200).json(otherUsers);
   } catch (err) {

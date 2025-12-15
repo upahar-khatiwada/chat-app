@@ -4,9 +4,46 @@ import { IoIosLogOut } from "react-icons/io";
 import { Link, useLocation } from "react-router";
 import { getSocket } from "../socket";
 import { toast } from "sonner";
+import { useState } from "react";
+import { debounce } from "lodash";
+import type User from "../interfaces/user_interface";
 
-const Navbar = () => {
+interface NavbarProps {
+  onUserSelect : (user: User | null) => void;
+}
+
+const Navbar = ({ onUserSelect  }: NavbarProps) => {
   const location = useLocation();
+  const [inputText, setInputText] = useState<string | null>("");
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+
+  const fetchUsers = async (query: string) => {
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BASE_URL}/api/users?search=${query}`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      setSearchResults(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const debouncedFetchUsers = debounce(fetchUsers, 300);
+
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const lowerCase = e.target.value.toLowerCase();
+    setInputText(lowerCase);
+    debouncedFetchUsers(lowerCase);
+  };
 
   return (
     <nav className="bg-linear-to-r from-[#231709] to-[#4A2511] text-white shadow-md h-[62px]">
@@ -19,16 +56,45 @@ const Navbar = () => {
             </div>
           </Link>
 
-          <div className="flex relative items-center">
+          <div id="search-container" className="flex relative items-center">
             <CiSearch
               size={25}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-200"
             />
             <input
               type="text"
+              value={inputText || ""}
+              onChange={inputHandler}
               placeholder="Search for a user..."
               className="pl-10 pr-4 py-3 rounded-xl placeholder-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#d6c7bc]"
             />
+
+            {searchResults.length > 0 && (
+              <div className="absolute top-full mt-1 w-full bg-[#ccba9e] text-black rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                {searchResults.map((user) => (
+                  <div
+                    onClick={
+                      () => {
+                        onUserSelect(user);
+                        setInputText("");
+                        setSearchResults([]);
+                      }
+                    }
+                    key={user.avatar}
+                    className="px-4 py-2 flex items-center gap-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer"
+                  >
+                    {user.avatar && (
+                      <img
+                        src={user.avatar}
+                        alt={user.fullName}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    )}
+                    <span>{user.fullName}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-5">
@@ -53,10 +119,13 @@ const Navbar = () => {
                   socket.disconnect();
                 }
 
-                const res = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/logout`, {
-                  credentials: "include",
-                  method: "POST",
-                });
+                const res = await fetch(
+                  `${import.meta.env.VITE_BASE_URL}/auth/logout`,
+                  {
+                    credentials: "include",
+                    method: "POST",
+                  }
+                );
 
                 if (res.ok) {
                   window.location.href = "/signin";
