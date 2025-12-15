@@ -11,6 +11,7 @@ import { useAuth } from "../context/AuthContext";
 import { getSocket } from "../socket";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import ChatHeaderSkeleton from "./skeletons/ChatHeaderSkeleton";
+import { toast } from "sonner";
 
 interface ChatWindowProps {
   userChattingWith: User;
@@ -22,6 +23,7 @@ interface ChatMessage {
   senderId: string;
   receiverId: string;
   text: string;
+  image: string;
   createdAt: string;
 }
 
@@ -29,26 +31,61 @@ export default function ChatWindow({
   userChattingWith,
   setUserChattingWith,
 }: ChatWindowProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]); // it has all messages between two users
+  const [message, setMessage] = useState(""); // this is the input text box's message
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
   const { user } = useAuth();
 
   const isSendDisabled = !message.trim();
 
   const handleSendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() && !selectedImage) return;
 
-    const res: ChatMessage = await sendMessagePostApi(
-      userChattingWith._id,
-      message
-    );
-    setMessages([...messages, res]);
+    const imageToSend = selectedImage;
+    setSelectedImage(undefined);
+    const textToSend = message;
     setMessage("");
+
+    try {
+      const res: ChatMessage = await sendMessagePostApi(
+        userChattingWith._id,
+        textToSend,
+        imageToSend
+      );
+      setMessages((prev) => [...prev, res]);
+    } catch (err) {
+      console.error(err);
+      toast("❌ Failed to send message");
+      setSelectedImage(imageToSend);
+      setMessage(textToSend);
+    }
   };
 
+  const handleSendImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast("❌ Only image files allowed");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setSelectedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    e.target.value = "";
+  };
+
+  // fetches the messages between two users
   useEffect(() => {
     if (!userChattingWith?._id) return;
 
@@ -67,6 +104,7 @@ export default function ChatWindow({
     fetchMessages();
   }, [userChattingWith?._id]);
 
+  // appends the new messages between two users
   useEffect(() => {
     const socket = getSocket();
 
@@ -84,6 +122,7 @@ export default function ChatWindow({
     };
   }, [userChattingWith._id]);
 
+  // scrolls to the latest message
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({
@@ -147,6 +186,13 @@ export default function ChatWindow({
                         : "bg-[#8B5E34] text-white"
                     }`}
                   >
+                    {msg.image && (
+                      <img
+                        src={msg.image}
+                        alt="Attachment"
+                        className="sm:max-w-[180px] rounded-md mb-2"
+                      />
+                    )}
                     {msg.text}
                   </div>
                   <span
@@ -178,6 +224,21 @@ export default function ChatWindow({
       </div>
 
       <div className="flex items-center p-3 sticky bg-[#beafa3]">
+        {selectedImage && (
+          <div className="relative m-2 w-32 h-32 border rounded-xl flex items-center justify-center">
+            <img
+              src={selectedImage}
+              className="w-28 h-28 object-cover rounded-xl"
+              alt="Preview"
+            />
+            <button
+              onClick={() => setSelectedImage(undefined)}
+              className="cursor-pointer absolute -top-2 -right-2 bg-black text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-gray-400 transition-all duration-200"
+            >
+              ✕
+            </button>
+          </div>
+        )}
         <textarea
           placeholder="Type a message..."
           value={message}
@@ -192,7 +253,10 @@ export default function ChatWindow({
           className="flex-1 px-4 py-3 rounded-xl placeholder-white border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#d6c7bc]"
         />
 
-        <button className="p-2 ml-2 cursor-pointer rounded-xl hover:bg-[#9b7d6d] transition-all duration-200">
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="p-2 ml-2 cursor-pointer rounded-xl hover:bg-[#9b7d6d] transition-all duration-200"
+        >
           <MdAttachFile size={28} className="text-black" />
         </button>
 
@@ -208,6 +272,14 @@ export default function ChatWindow({
           <IoMdSend size={28} className="text-black" />
         </button>
       </div>
+
+      <input
+        type="file"
+        accept="image/*"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleSendImage}
+      />
     </div>
   );
 }

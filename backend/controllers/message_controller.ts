@@ -2,6 +2,7 @@ import { type Request, type Response } from "express";
 import type { Types } from "mongoose";
 import { Message } from "../models/message_model";
 import { getSocketIdOfUser, io } from "../config/socket";
+import cloudinary from "../config/cloudinary";
 
 export const getMessages = async (req: Request, res: Response) => {
   try {
@@ -38,7 +39,7 @@ export const sendMessage = async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const { textSent } = req.body;
+    const { textSent, image } = req.body;
     const { receiverId } = req.params;
     const senderId = req.user?._id;
 
@@ -48,17 +49,23 @@ export const sendMessage = async (req: Request, res: Response) => {
         .json({ success: false, message: "Receiver Id not found." });
     }
 
+    let imageUrl: string | undefined;
+    if (image) {
+      imageUrl = (await cloudinary.uploader.upload(image)).secure_url;
+    }
+
     const message = await Message.create({
       senderId,
       receiverId: receiverId,
       text: textSent,
+      image: imageUrl,
     });
 
     const socketIdOfReceiver = getSocketIdOfUser(receiverId);
     if (socketIdOfReceiver) {
       io.to(socketIdOfReceiver).emit("message", message);
     }
-    
+
     res.status(200).json(message);
   } catch (err) {
     console.log("Error in sendMessage: ", err);

@@ -1,4 +1,8 @@
-export const sendMessagePostApi = async (receiverId: string, text: string) => {
+export const sendMessagePostApi = async (
+  receiverId: string,
+  text?: string,
+  image?: string | undefined
+) => {
   const response = await fetch(
     `${import.meta.env.VITE_BASE_URL}/api/messages/send/${receiverId}`,
     {
@@ -9,6 +13,7 @@ export const sendMessagePostApi = async (receiverId: string, text: string) => {
       },
       body: JSON.stringify({
         textSent: text,
+        image: image,
       }),
     }
   );
