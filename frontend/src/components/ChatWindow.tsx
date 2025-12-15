@@ -34,15 +34,31 @@ export default function ChatWindow({
   const [messages, setMessages] = useState<ChatMessage[]>([]); // it has all messages between two users
   const [message, setMessage] = useState(""); // this is the input text box's message
   const [loading, setLoading] = useState<boolean>(false);
+  const [typing, setTyping] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const messageEndRef = useRef<HTMLDivElement | null>(null);
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
   const { user } = useAuth();
 
   const isSendDisabled = !message.trim();
+
+  const handleTyping = () => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    socket.emit("typing", userChattingWith._id);
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+
+    typingTimeout.current = setTimeout(() => {
+      socket.emit("stopTyping", userChattingWith._id);
+      typingTimeout.current = null;
+    }, 1000);
+  };
 
   const handleSendMessage = async () => {
     if (!message.trim() && !selectedImage) return;
@@ -132,6 +148,29 @@ export default function ChatWindow({
     }
   }, [messages]);
 
+  // for showing typing
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    socket.on("typing", (id: string) => {
+      if (id === userChattingWith._id) {
+        setTyping(true);
+      }
+    });
+
+    socket.on("stopTyping", (id: string) => {
+      if (id === userChattingWith._id) {
+        setTyping(false);
+      }
+    });
+
+    return () => {
+      socket.off("typing");
+      socket.off("stopTyping");
+    };
+  }, [userChattingWith._id]);
+
   return (
     <div className="flex-1 h-[calc(100vh-62px)] flex flex-col border rounded-2xl overflow-hidden border-none bg-white">
       <div className="bg-linear-to-r from-[#231709] to-[#4A2511] text-white">
@@ -220,6 +259,14 @@ export default function ChatWindow({
             );
           })
         )}
+
+        {typing && (
+          <div className="flex items-center space-x-2 ml-4 text-sm text-gray-600 italic">
+            <span>{userChattingWith.fullName} is typing</span>
+            <span className="inline-block animate-pulse">• • •</span>
+          </div>
+        )}
+
         <div ref={messageEndRef} />
       </div>
 
@@ -242,7 +289,10 @@ export default function ChatWindow({
         <textarea
           placeholder="Type a message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            handleTyping();
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
