@@ -13,10 +13,23 @@ import path from "path";
 
 const __dirname = path.resolve();
 
+console.log(process.env.NODE_ENV);
+
+const allowedOrigins = [
+  "http://localhost:4000",
+  "https://chat-app-xkgk.onrender.com",
+];
+
 // cors middleware
 app.use(
   cors({
-    origin: "*",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -34,6 +47,7 @@ app.use(
     cookie: {
       secure: false,
       httpOnly: true,
+      sameSite: "lax",
     },
   })
 );

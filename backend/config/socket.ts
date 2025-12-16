@@ -9,7 +9,7 @@ const onlineUsers = new Map<string, string>();
 
 const io = new Server(server, {
   cors: {
-    origin: ["*"],
+    origin: ["http://localhost:4000", "https://chat-app-xkgk.onrender.com"],
     credentials: true,
   },
 });

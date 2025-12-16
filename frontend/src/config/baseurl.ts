@@ -1,0 +1,2 @@
+export const redirectURL = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:4000" : import.meta.env.VITE_BACKEND_URL;
+export const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : import.meta.env.VITE_BACKEND_URL;

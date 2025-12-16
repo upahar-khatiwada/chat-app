@@ -1,4 +1,4 @@
-const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "/";
+import { baseUrl } from "../config/baseurl";
 
 export const sendMessagePostApi = async (
   receiverId: string,

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import type User from "../interfaces/user_interface";
 import { toast } from "sonner";
+import { baseUrl } from "../config/baseurl";
 
 type AuthContextType = {
   user: User | null;
@@ -21,8 +22,6 @@ type AuthProviderProps = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
-
-  const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "/";
 
   useEffect(() => {
     fetch(`${baseUrl}/auth/me`, {

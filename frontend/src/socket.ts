@@ -1,9 +1,5 @@
 import { io, type Socket } from "socket.io-client";
-
-const baseUrl =
-  import.meta.env.VITE_NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : "/";
+import { baseUrl } from "./config/baseurl";
 
 let socket: Socket | null = null;
 

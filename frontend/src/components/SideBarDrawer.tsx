@@ -4,6 +4,7 @@ import type User from "../interfaces/user_interface";
 import { useAuth } from "../context/AuthContext";
 import { connectSocket } from "../socket";
 import SideBarSkeleton from "./skeletons/SideBarSkeleton";
+import { baseUrl } from "../config/baseurl";
 
 interface SideBarDrawerProps {
   onChatSelect: (user: User) => void;
@@ -21,11 +22,6 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const handleCheckBoxTicked = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckBoxTicked(e.target.checked);
   };
-
-  const baseUrl =
-    import.meta.env.VITE_NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "/";
 
   useEffect(() => {
     if (!user) return;

@@ -3,8 +3,7 @@
 // import { Mail, Lock } from "lucide-react";
 import { FaGoogle, FaUnlock } from "react-icons/fa";
 import AuthNavbar from "./auth_components/AuthNavBar";
-
-const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "/";
+import { baseUrl } from "../config/baseurl";
 
 const signInWithGoogle = () => {
   window.location.href = `${baseUrl}/auth/google`;

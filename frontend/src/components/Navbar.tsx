@@ -98,7 +98,7 @@ const Navbar = ({ onUserSelect }: NavbarProps) => {
           </div>
 
           <div className="flex items-center gap-5">
-            <Link to={"/profile"} state={onUserSelect}>
+            <Link to={"/profile"}>
               <div
                 className={`flex items-center gap-1 px-3 py-1 rounded-lg hover:scale-105 hover:bg-[#b99a88] transition-transform duration-200 ${
                   location.pathname === "/profile"

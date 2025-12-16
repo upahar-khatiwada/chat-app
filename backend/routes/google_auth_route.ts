@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import { googleCallback, getMe, logout } from "../controllers/google_auth_controller";
 import { protectRoute } from "../middlewares/protect_route_middleware";
+import { baseUrl } from "../config/baseurl";
 
 const router = express.Router();
 
@@ -13,7 +14,7 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:4000/signin",
+    failureRedirect: `${baseUrl}/signin`,
   }),
   googleCallback
 );

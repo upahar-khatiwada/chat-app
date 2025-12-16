@@ -5,15 +5,18 @@ import {
 } from "passport-google-oauth2";
 import { User, type IUserDocument } from "../models/user_model";
 import type { Request } from "express";
+import { redirectURL } from "./baseurl";
 
-const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "";
+if(!redirectURL) {
+  throw new Error("No redirect url in passport.ts")
+}
 
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: `${baseUrl}/auth/google/callback`,
+      callbackURL: redirectURL,
       passReqToCallback: true,
     },
     async function (

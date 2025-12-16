@@ -1,7 +1,8 @@
 import { type Request, type Response, type NextFunction } from "express";
+import { frontendBaseUrl} from "../config/baseurl";
 
 export const googleCallback = (req: Request, res: Response) => {
-  res.redirect("http://localhost:4000/home?success=1");
+  res.redirect(`${frontendBaseUrl}/home?success=1`);
 };
 
 export const getMe = (req: Request, res: Response) => {
