@@ -6,12 +6,14 @@ import {
 import { User, type IUserDocument } from "../models/user_model";
 import type { Request } from "express";
 
+const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "";
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      callbackURL: `http://localhost:3000/auth/google/callback`,
+      callbackURL: `${baseUrl}/auth/google/callback`,
       passReqToCallback: true,
     },
     async function (
@@ -20,7 +22,7 @@ passport.use(
       refreshToken: string,
       profile: Profile,
       done: VerifyCallback
-    )  {
+    ) {
       try {
         const email: string | undefined = profile.emails?.[0]?.value;
         const googleId: string = profile.id;
@@ -45,15 +47,19 @@ passport.use(
   )
 );
 
-passport.serializeUser((user: IUserDocument, done: (err: any, id?: string) => void) => {
-  done(null, user._id.toString());
-});
-
-passport.deserializeUser(async (id: string, done: (err: any, user?: IUserDocument | null) => void) => {
-  try {
-    const user = await User.findById(id).exec();
-    done(null, user);
-  } catch (err) {
-    done(err, null);
+passport.serializeUser(
+  (user: IUserDocument, done: (err: any, id?: string) => void) => {
+    done(null, user._id.toString());
   }
-});
+);
+
+passport.deserializeUser(
+  async (id: string, done: (err: any, user?: IUserDocument | null) => void) => {
+    try {
+      const user = await User.findById(id).exec();
+      done(null, user);
+    } catch (err) {
+      done(err, null);
+    }
+  }
+);

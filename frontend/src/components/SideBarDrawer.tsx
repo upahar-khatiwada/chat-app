@@ -22,6 +22,11 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
     setCheckBoxTicked(e.target.checked);
   };
 
+  const baseUrl =
+    import.meta.env.VITE_NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "/";
+
   useEffect(() => {
     if (!user) return;
 
@@ -36,7 +41,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${import.meta.env.VITE_BASE_URL}/api/users`, {
+        const res = await fetch(`${baseUrl}/api/users`, {
           credentials: "include",
         });
         if (!res.ok) throw new Error("Error fetching users");

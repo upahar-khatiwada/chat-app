@@ -28,6 +28,10 @@ const messageSchema = new Schema<IMessageDocument>(
       ref: "Message",
       default: null,
     },
+    seen: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

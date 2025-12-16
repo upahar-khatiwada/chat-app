@@ -4,8 +4,10 @@
 import { FaGoogle, FaUnlock } from "react-icons/fa";
 import AuthNavbar from "./auth_components/AuthNavBar";
 
+const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "/";
+
 const signInWithGoogle = () => {
-  window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google`;
+  window.location.href = `${baseUrl}/auth/google`;
 };
 
 const SignInPage = () => {

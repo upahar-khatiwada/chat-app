@@ -1,12 +1,15 @@
 import Navbar from "../components/Navbar";
 import { CiCamera } from "react-icons/ci";
 import { useAuth } from "../context/AuthContext";
+import { useLocation } from "react-router";
 
 const ProfilePage = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  const { onUserSelect } = location.state;
   return (
     <>
-      <Navbar />
+      <Navbar onUserSelect={onUserSelect} />
 
       <div className="max-w-xl mx-auto mt-10 p-6 rounded-lg bg-[#3c280d] text-white flex flex-col gap-6 items-center">
         <h1 className="font-bold text-3xl">Profile</h1>

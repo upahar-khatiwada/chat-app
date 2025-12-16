@@ -9,13 +9,18 @@ import { debounce } from "lodash";
 import type User from "../interfaces/user_interface";
 
 interface NavbarProps {
-  onUserSelect : (user: User | null) => void;
+  onUserSelect: (user: User | null) => void;
 }
 
-const Navbar = ({ onUserSelect  }: NavbarProps) => {
+const Navbar = ({ onUserSelect }: NavbarProps) => {
   const location = useLocation();
   const [inputText, setInputText] = useState<string | null>("");
   const [searchResults, setSearchResults] = useState<User[]>([]);
+
+  const baseUrl =
+    import.meta.env.VITE_NODE_ENV === "development"
+      ? "http://localhost:3000"
+      : "/";
 
   const fetchUsers = async (query: string) => {
     if (!query) {
@@ -24,12 +29,9 @@ const Navbar = ({ onUserSelect  }: NavbarProps) => {
     }
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/users?search=${query}`,
-        {
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${baseUrl}/api/users?search=${query}`, {
+        credentials: "include",
+      });
       const data = await res.json();
       setSearchResults(data);
     } catch (err) {
@@ -73,13 +75,11 @@ const Navbar = ({ onUserSelect  }: NavbarProps) => {
               <div className="absolute top-full mt-1 w-full bg-[#ccba9e] text-black rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                 {searchResults.map((user) => (
                   <div
-                    onClick={
-                      () => {
-                        onUserSelect(user);
-                        setInputText("");
-                        setSearchResults([]);
-                      }
-                    }
+                    onClick={() => {
+                      onUserSelect(user);
+                      setInputText("");
+                      setSearchResults([]);
+                    }}
                     key={user._id}
                     className="px-4 py-2 flex items-center gap-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer"
                   >
@@ -98,7 +98,7 @@ const Navbar = ({ onUserSelect  }: NavbarProps) => {
           </div>
 
           <div className="flex items-center gap-5">
-            <Link to={"/profile"}>
+            <Link to={"/profile"} state={onUserSelect}>
               <div
                 className={`flex items-center gap-1 px-3 py-1 rounded-lg hover:scale-105 hover:bg-[#b99a88] transition-transform duration-200 ${
                   location.pathname === "/profile"
@@ -119,13 +119,10 @@ const Navbar = ({ onUserSelect  }: NavbarProps) => {
                   socket.disconnect();
                 }
 
-                const res = await fetch(
-                  `${import.meta.env.VITE_BASE_URL}/auth/logout`,
-                  {
-                    credentials: "include",
-                    method: "POST",
-                  }
-                );
+                const res = await fetch(`${baseUrl}/auth/logout`, {
+                  credentials: "include",
+                  method: "POST",
+                });
 
                 if (res.ok) {
                   window.location.href = "/signin";

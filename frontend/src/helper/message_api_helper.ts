@@ -1,10 +1,12 @@
+const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "/";
+
 export const sendMessagePostApi = async (
   receiverId: string,
   text?: string,
   image?: string | undefined
 ) => {
   const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL}/api/messages/send/${receiverId}`,
+    `${baseUrl}/api/messages/send/${receiverId}`,
     {
       method: "POST",
       credentials: "include",
@@ -29,7 +31,7 @@ export const sendMessagePostApi = async (
 
 export const getMessagesApi = async (otherUserId: string) => {
   const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL}/api/messages/get/${otherUserId}`,
+    `${baseUrl}/api/messages/get/${otherUserId}`,
     {
       credentials: "include",
     }

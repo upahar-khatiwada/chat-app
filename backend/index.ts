@@ -8,18 +8,21 @@ import cors from "cors";
 import googleAuthRoute from "./routes/google_auth_route";
 import userRoute from "./routes/user_route";
 import messageRoute from "./routes/message_route";
-import {app, server} from "./config/socket";
+import { app, server } from "./config/socket";
+import path from "path";
+
+const __dirname = path.resolve();
 
 // cors middleware
 app.use(
   cors({
-    origin: "http://localhost:4000",
+    origin: "*",
     credentials: true,
   })
 );
 
 // json middleware
-app.use(express.json({limit: "5mb"}));
+app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 
 // session middleware
@@ -46,10 +49,6 @@ app.use("/api/messages", messageRoute);
 
 const PORT: number = Number(process.env.PORT);
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("<h1>Hello World</h1>");
-});
-
 app.get("/login-failed", (req, res) => {
   res.send("Login Failed brev");
 });
@@ -57,6 +56,14 @@ app.get("/login-failed", (req, res) => {
 app.get("/dashboard", (req, res) => {
   res.send("Logged in successfully!");
 });
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+
+  app.get(/^\/.*$/, (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  });
+}
 
 server.listen(PORT, () => {
   connectToMongoDB();

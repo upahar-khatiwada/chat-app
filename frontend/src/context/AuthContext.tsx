@@ -22,8 +22,10 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
 
+  const baseUrl = import.meta.env.VITE_NODE_ENV === "development" ? "http://localhost:3000" : "/";
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_BASE_URL}/auth/me`, {
+    fetch(`${baseUrl}/auth/me`, {
       credentials: "include",
     })
       .then((res) => res.json())

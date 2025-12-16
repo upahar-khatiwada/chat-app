@@ -5,4 +5,5 @@ export interface IMessage {
   receiverId: Types.ObjectId | string;
   text?: string;
   image?: string;
+  seen: boolean;
 }
