@@ -1,6 +1,9 @@
 # Chat App
 
-A real-time chat application built with MERN stack and websockets.
+A real-time chat application built using the **MERN stack (MongoDB, Express, React, Node.js)** with **WebSockets** for instant communication.  
+This app enables users to seamlessly connect through private and group chats, delivering low-latency message delivery, a responsive user interface, and a scalable backend architecture. It is designed to demonstrate real-time system design, full-stack development practices, and modern web technologies.
+
+**Live Demo:**  https://chat-app-xkgk.onrender.com/
 
 ## Screenshots
 
