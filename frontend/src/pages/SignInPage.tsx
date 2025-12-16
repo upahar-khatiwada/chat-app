@@ -1,23 +1,23 @@
-import { useForm, type FieldValues } from "react-hook-form";
-import AuthTextField from "./auth_components/AuthTextField";
-import { Mail, Lock } from "lucide-react";
-import { FaGoogle } from "react-icons/fa";
+// import { useForm, type FieldValues } from "react-hook-form";
+// import AuthTextField from "./auth_components/AuthTextField";
+// import { Mail, Lock } from "lucide-react";
+import { FaGoogle, FaUnlock } from "react-icons/fa";
 import AuthNavbar from "./auth_components/AuthNavBar";
 
-  const signInWithGoogle = () => {
-    window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google`;
-  }
+const signInWithGoogle = () => {
+  window.location.href = `${import.meta.env.VITE_BASE_URL}/auth/google`;
+};
 
 const SignInPage = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm();
 
-  const onSubmit = (data: FieldValues) => {
-    console.log("Sign in data:", data);
-  };
+  // const onSubmit = (data: FieldValues) => {
+  //   console.log("Sign in data:", data);
+  // };
 
   return (
     <>
@@ -25,7 +25,8 @@ const SignInPage = () => {
 
       <div className="flex flex-col gap-10 items-center justify-center min-h-[calc(100vh-62px)]">
         <h1 className="text-3xl font-bold">Sign In</h1>
-        <form
+        <FaUnlock size={70} />
+        {/* <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-3 w-80"
         >
@@ -55,17 +56,22 @@ const SignInPage = () => {
           >
             Sign In
           </button>
-        </form>
+        </form> */}
         <div className="flex flex-col items-center gap-6 w-full">
-          <div className="relative w-full flex items-center">
+          {/* <div className="relative w-full flex items-center">
             <div className="h-px bg-gray-400 flex-1"></div>
             <span className="px-4 text-gray-300 font-semibold">or</span>
             <div className="h-px bg-gray-400 flex-1"></div>
-          </div>
+          </div> */}
 
-          <button onClick={signInWithGoogle} className="flex items-center justify-center gap-3 bg-gray-100 hover:bg-gray-200 transition-colors p-4 rounded-full shadow-sm w-full max-w-md cursor-pointer">
+          <button
+            onClick={signInWithGoogle}
+            className="flex items-center justify-center gap-3 bg-gray-100 hover:bg-gray-200 transition-colors p-4 rounded-full shadow-sm w-full max-w-md cursor-pointer"
+          >
             <FaGoogle className="text-2xl text-amber-900" />
-            <span className="text-lg font-semibold text-amber-800">Sign In with Google</span>
+            <span className="text-lg font-semibold text-amber-800">
+              Sign In with Google
+            </span>
           </button>
         </div>
       </div>

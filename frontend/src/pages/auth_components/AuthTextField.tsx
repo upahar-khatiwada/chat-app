@@ -1,3 +1,5 @@
+// UNUSED COMPONENT
+
 import type { LucideIcon } from "lucide-react";
 import type { UseFormRegisterReturn } from "react-hook-form";
 

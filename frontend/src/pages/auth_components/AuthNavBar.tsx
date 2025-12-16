@@ -26,7 +26,7 @@ const AuthNavbar = () => {
             >
               Sign In
             </Link>
-            <Link
+            {/* <Link
               to="/signup"
               className={`px-4 py-2 rounded-md font-medium transition-colors duration-200 ${
                 location.pathname === "/signup"
@@ -35,7 +35,7 @@ const AuthNavbar = () => {
               }`}
             >
               Sign Up
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
