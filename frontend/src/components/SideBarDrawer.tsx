@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CiMenuBurger } from "react-icons/ci";
 import type User from "../interfaces/user_interface";
 import { useAuth } from "../context/AuthContext";
-import { connectSocket } from "../socket";
+import { connectSocket, getSocket } from "../socket";
 import SideBarSkeleton from "./skeletons/SideBarSkeleton";
 import { baseUrl } from "../config/baseurl";
 
@@ -10,10 +10,7 @@ interface SideBarDrawerProps {
   onChatSelect: (user: User) => void;
 }
 
-interface UnreadCount {
-  _id: string;
-  count: number;
-}
+type UnreadCountsMap = Record<string, number>;
 
 const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const { user } = useAuth();
@@ -23,7 +20,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
-  const [unreadCounts, setUnreadCounts] = useState<UnreadCount[]>([]);
+  const [unreadCounts, setUnreadCounts] = useState<UnreadCountsMap>({});
 
   const handleCheckBoxTicked = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckBoxTicked(e.target.checked);
@@ -42,20 +39,36 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   useEffect(() => {
     if (!user) return;
 
-    const fetchUnreadCounts = async () => {
-      const res = await fetch(`${baseUrl}/api/messages/get/unseen-counts`, {
-        credentials: "include",
-      });
+    const socket = getSocket();
 
-      const data = await res.json();
-      setUnreadCounts(data);
+    if (!socket) return;
+
+    socket.emit("get-unseen-counts");
+
+    socket.on("unseen-counts", (counts) => {
+      setUnreadCounts(counts);
+    });
+
+    return () => {
+      socket.off("unseen-counts");
     };
-    fetchUnreadCounts();
   }, [user]);
 
   useEffect(() => {
-    console.log("Unread counts updated:", unreadCounts);
-  }, [unreadCounts]);
+    const socket = getSocket();
+    if (!socket) return;
+
+    socket.on("unseen-count-increment", (senderId: string) => {
+      setUnreadCounts((prev) => ({
+        ...prev,
+        [senderId]: (prev[senderId] ?? 0) + 1,
+      }));
+    });
+
+    return () => {
+      socket.off("unseen-count-increment");
+    };
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -144,11 +157,9 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                         </span>
                       </div>
                     )}
-                    {unreadCounts.find((u) => {
-                      return u._id === user._id && u.count > 0;
-                    }) && (
+                    {unreadCounts[user._id] > 0 && (
                       <div className="absolute right-2 top-5 bg-red-500 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {unreadCounts.find((u) => u._id === user._id)?.count}
+                        {unreadCounts[user._id]}
                       </div>
                     )}
                     {onlineUsers.includes(user._id) && (

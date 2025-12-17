@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { Message } from "../models/message_model";
+import { getUnSeenMessagesCounts } from "../utils/socket_messages_utils";
 
 const app = express();
 const server = http.createServer(app);
@@ -28,7 +29,7 @@ io.on("connection", (socket) => {
 
   onlineUsers.set(userId, socket.id);
 
-  console.log("All online users right now: ", onlineUsers);
+  // console.log("All online users right now: ", onlineUsers);
 
   io.emit("allOnlineUsers", Array.from(onlineUsers.keys()));
 
@@ -44,6 +45,21 @@ io.on("connection", (socket) => {
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("stopTyping", userId);
     }
+  });
+
+  socket.on("get-unseen-counts", async () => {
+    const counts = await getUnSeenMessagesCounts(userId);
+
+    if(!counts) {
+      return;
+    }
+
+    const countsMap: Record<string, number> = {};
+    counts.forEach((item) => {
+      countsMap[item._id.toString()] = item.count;
+    });
+
+    socket.emit("unseen-counts", countsMap);
   });
 
   socket.on("seen", async (myId: string, userChattingToId: string) => {

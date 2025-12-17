@@ -64,74 +64,12 @@ export const sendMessage = async (req: Request, res: Response) => {
     const socketIdOfReceiver = getSocketIdOfUser(receiverId);
     if (socketIdOfReceiver) {
       io.to(socketIdOfReceiver).emit("message", message);
+      io.to(socketIdOfReceiver).emit("unseen-count-increment", senderId.toString());
     }
 
     res.status(200).json(message);
   } catch (err) {
     console.log("Error in sendMessage: ", err);
-    res.status(500).json({ success: false, error: "Internal server error" });
-  }
-};
-
-export const getUnSeenMessagesCounts = async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Couldnt find user" });
-    }
-
-    const myId = req.user._id;
-
-    const unSeenMessagesCounts = await Message.aggregate([
-      {
-        $match: {
-          receiverId: myId,
-          seen: false,
-        },
-      },
-      {
-        $group: {
-          _id: "$senderId",
-          count: { $sum: 1 },
-        },
-      },
-    ]);
-
-    res.status(200).json(unSeenMessagesCounts);
-  } catch (err) {
-    console.log("Error in getUnSeenMessagesCounts: ", err);
-    res.status(500).json({ success: false, error: "Internal server error" });
-  }
-};
-
-export const markMessagesAsSeen = async (req: Request, res: Response) => {
-  try {
-    if (!req.user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Couldnt find user" });
-    }
-
-    const myId = req.user._id;
-    const { otherUserId } = req.params;
-
-    await Message.updateMany(
-      {
-        senderId: otherUserId,
-        receiverId: myId,
-        seen: false,
-      },
-      {
-        $set: { seen: true },
-      }
-    );
-
-    res
-      .status(200)
-      .json({ success: true, message: "Updated messages as seen" });
-  } catch (err) {
-    console.log("Error in markMessagesAsSeen: ", err);
     res.status(500).json({ success: false, error: "Internal server error" });
   }
 };
