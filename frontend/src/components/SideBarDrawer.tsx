@@ -10,6 +10,11 @@ interface SideBarDrawerProps {
   onChatSelect: (user: User) => void;
 }
 
+interface UnreadCount {
+  _id: string;
+  count: number;
+}
+
 const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const { user } = useAuth();
 
@@ -18,6 +23,7 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
   const [users, setUsers] = useState<User[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [checkBoxTicked, setCheckBoxTicked] = useState<boolean>(false);
+  const [unreadCounts, setUnreadCounts] = useState<UnreadCount[]>([]);
 
   const handleCheckBoxTicked = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCheckBoxTicked(e.target.checked);
@@ -32,6 +38,24 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
       setOnlineUsers(onlineUserIds);
     });
   }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchUnreadCounts = async () => {
+      const res = await fetch(`${baseUrl}/api/messages/get/unseen-counts`, {
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      setUnreadCounts(data);
+    };
+    fetchUnreadCounts();
+  }, [user]);
+
+  useEffect(() => {
+    console.log("Unread counts updated:", unreadCounts);
+  }, [unreadCounts]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -98,7 +122,9 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                 )
                 .map((user) => (
                   <div
-                    onClick={() => onChatSelect(user)}
+                    onClick={() => {
+                      onChatSelect(user);
+                    }}
                     key={user._id}
                     className="flex items-center gap-2 p-2 hover:bg-[#704026] hover:rounded-xl transition-all duration-200 cursor-pointer relative"
                   >
@@ -116,6 +142,13 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                             ? "Online"
                             : "Offline"}
                         </span>
+                      </div>
+                    )}
+                    {unreadCounts.find((u) => {
+                      return u._id === user._id && u.count > 0;
+                    }) && (
+                      <div className="absolute right-2 top-5 bg-red-500 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                        {unreadCounts.find((u) => u._id === user._id)?.count}
                       </div>
                     )}
                     {onlineUsers.includes(user._id) && (

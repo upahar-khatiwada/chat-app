@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import http from "http";
 import express from "express";
+import { Message } from "../models/message_model";
 
 const app = express();
 const server = http.createServer(app);
@@ -31,17 +32,35 @@ io.on("connection", (socket) => {
 
   io.emit("allOnlineUsers", Array.from(onlineUsers.keys()));
 
-  socket.on("typing", (userTypingTo) => {
+  socket.on("typing", (userTypingTo: string) => {
     const receiverSocketId = onlineUsers.get(userTypingTo);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("typing", userId);
     }
   });
 
-  socket.on("stopTyping", (userTypingTo) => {
+  socket.on("stopTyping", (userTypingTo: string) => {
     const receiverSocketId = onlineUsers.get(userTypingTo);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("stopTyping", userId);
+    }
+  });
+
+  socket.on("seen", async (myId: string, userChattingToId: string) => {
+    await Message.updateMany(
+      {
+        senderId: userChattingToId,
+        receiverId: myId,
+        seen: false,
+      },
+      {
+        $set: { seen: true },
+      }
+    );
+
+    const receiverSocketId = onlineUsers.get(userChattingToId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("seen", myId, userChattingToId);
     }
   });
 

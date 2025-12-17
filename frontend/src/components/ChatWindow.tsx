@@ -25,6 +25,7 @@ interface ChatMessage {
   text: string;
   image: string;
   createdAt: string;
+  seen: boolean;
 }
 
 export default function ChatWindow({
