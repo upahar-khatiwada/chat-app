@@ -17,8 +17,8 @@ const io = new Server(server, {
     origin: [
       "http://localhost:4000",
       "https://chat-app-xkgk.onrender.com",
-      "http://chat.upaharkhatiwada.com.np/",
-      "https://chat.upaharkhatiwada.com.np/",
+      "http://chat.upaharkhatiwada.com.np",
+      "https://chat.upaharkhatiwada.com.np",
     ],
     credentials: true,
   },
