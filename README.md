@@ -3,7 +3,7 @@
 A real-time chat application built using the **MERN stack (MongoDB, Express, React, Node.js)** with **WebSockets** for instant communication.  
 This app enables users to seamlessly connect through private chats, delivering low-latency message delivery.
 
-**Live Demo:**  https://chat-app-xkgk.onrender.com/
+[Live Demo](https://chat.upaharkhatiwada.com.np/)
 
 ## Screenshots
 
