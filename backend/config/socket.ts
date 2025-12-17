@@ -2,7 +2,10 @@ import { Server } from "socket.io";
 import http from "http";
 import express from "express";
 import { Message } from "../models/message_model";
-import { getUnSeenMessagesCounts } from "../utils/socket_messages_utils";
+import {
+  getUnSeenMessagesCounts,
+  markMessagesAsSeen,
+} from "../utils/socket_messages_utils";
 
 const app = express();
 const server = http.createServer(app);
@@ -50,7 +53,7 @@ io.on("connection", (socket) => {
   socket.on("get-unseen-counts", async () => {
     const counts = await getUnSeenMessagesCounts(userId);
 
-    if(!counts) {
+    if (!counts) {
       return;
     }
 
@@ -63,17 +66,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("seen", async (myId: string, userChattingToId: string) => {
-    await Message.updateMany(
-      {
-        senderId: userChattingToId,
-        receiverId: myId,
-        seen: false,
-      },
-      {
-        $set: { seen: true },
-      }
-    );
-
+    await markMessagesAsSeen(myId, userChattingToId);
     const receiverSocketId = onlineUsers.get(userChattingToId);
     if (receiverSocketId) {
       io.to(receiverSocketId).emit("seen", myId, userChattingToId);

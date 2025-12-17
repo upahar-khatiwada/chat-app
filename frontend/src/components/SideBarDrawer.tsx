@@ -58,17 +58,37 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
     const socket = getSocket();
     if (!socket) return;
 
-    socket.on("unseen-count-increment", (senderId: string) => {
+    socket.on("seen", (_: string, userChattingToId: string) => {
       setUnreadCounts((prev) => ({
         ...prev,
-        [senderId]: (prev[senderId] ?? 0) + 1,
+        [userChattingToId]: 0,
       }));
     });
 
     return () => {
-      socket.off("unseen-count-increment");
+      socket.off("seen");
     };
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleIncrement = (senderId: string) => {
+      setUnreadCounts((prev) => ({
+        ...prev,
+        [senderId]: (prev[senderId] ?? 0) + 1,
+      }));
+    };
+
+    socket.on("unseen-count-increment", handleIncrement);
+
+    return () => {
+      socket.off("unseen-count-increment", handleIncrement);
+    };
+  }, [user]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -130,39 +150,46 @@ const SidebarDrawer = ({ onChatSelect }: SideBarDrawerProps) => {
                 .fill(0)
                 .map((_, i) => <SideBarSkeleton key={i} open={open} />)
             : users
-                .filter(
-                  (user) => !checkBoxTicked || onlineUsers.includes(user._id)
-                )
-                .map((user) => (
+                .filter((u) => !checkBoxTicked || onlineUsers.includes(u._id))
+                .map((u) => (
                   <div
                     onClick={() => {
-                      onChatSelect(user);
+                      onChatSelect(u);
+
+                      const socket = getSocket();
+
+                      if (!socket || !user?._id) return;
+
+                      setUnreadCounts((prev) => ({
+                        ...prev,
+                        [u._id]: 0,
+                      }));
+
+                      socket.emit("seen", user._id, u._id);
                     }}
-                    key={user._id}
+                    key={u._id}
                     className="flex items-center gap-2 p-2 hover:bg-[#704026] hover:rounded-xl transition-all duration-200 cursor-pointer relative"
                   >
                     <img
-                      src={user.avatar}
-                      alt={user.fullName}
+                      src={u.avatar}
+                      alt={u.fullName}
                       className="w-10 h-10 rounded-full"
                       referrerPolicy="no-referrer"
                     />
                     {open && (
                       <div>
-                        <p className="font-semibold">{user.fullName}</p>
+                        <p className="font-semibold">{u.fullName}</p>
                         <span className="text-sm text-gray-400">
-                          {onlineUsers.includes(user._id)
-                            ? "Online"
-                            : "Offline"}
+                          {onlineUsers.includes(u._id) ? "Online" : "Offline"}
                         </span>
                       </div>
                     )}
-                    {unreadCounts[user._id] > 0 && (
+                    {unreadCounts[u._id] > 0 && (
                       <div className="absolute right-2 top-5 bg-red-500 text-white font-bold text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                        {unreadCounts[user._id]}
+                        {unreadCounts[u._id]}
                       </div>
                     )}
-                    {onlineUsers.includes(user._id) && (
+                    {onlineUsers.includes(u._id) && (
                       <div className="absolute bg-green-400 border-none rounded-full w-2.5 h-2.5 bottom-3 left-9"></div>
                     )}
                   </div>
