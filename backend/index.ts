@@ -18,6 +18,8 @@ console.log(process.env.NODE_ENV);
 const allowedOrigins = [
   "http://localhost:4000",
   "https://chat-app-xkgk.onrender.com",
+  "http://chat.upaharkhatiwada.com.np/",
+  "https://chat.upaharkhatiwada.com.np/",
 ];
 
 // cors middleware

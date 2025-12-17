@@ -14,7 +14,12 @@ const onlineUsers = new Map<string, string>();
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:4000", "https://chat-app-xkgk.onrender.com"],
+    origin: [
+      "http://localhost:4000",
+      "https://chat-app-xkgk.onrender.com",
+      "http://chat.upaharkhatiwada.com.np/",
+      "https://chat.upaharkhatiwada.com.np/",
+    ],
     credentials: true,
   },
 });
