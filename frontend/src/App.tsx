@@ -6,6 +6,7 @@ import { Routes, Route } from "react-router";
 import PublicRoute from "./components/PublicRoute";
 import { Toaster } from "sonner";
 import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
@@ -20,16 +21,22 @@ const App = () => {
               </PublicRoute>
             }
           />
-          {/* <Route
-            path="/signup"
+          <Route
+            path="/profile"
             element={
-              <PublicRoute>
-                <SignUpPage />
-              </PublicRoute>
+              <PrivateRoute>
+                <ProfilePage />
+              </PrivateRoute>
             }
-          /> */}
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/home" element={<HomePage />} />
+          />
+          <Route
+            path="/home"
+            element={
+              <PrivateRoute>
+                <HomePage />
+              </PrivateRoute>
+            }
+          />
           <Route path="*" element={<SignInPage />} />
         </Routes>
         <div>
