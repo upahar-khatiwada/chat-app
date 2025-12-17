@@ -16,6 +16,9 @@ This app enables users to seamlessly connect through private chats, delivering l
 ### Chat View(Shows real-time online users)
 <img width="1919" height="913" alt="image" src="https://github.com/user-attachments/assets/728992a0-7e20-4d5e-9792-bf8d5d35b3ab" />
 
+### Shows real-time unread messages
+<img width="1905" height="901" alt="image" src="https://github.com/user-attachments/assets/32904622-fb77-47c8-b892-0c98fcc5a5f1" />
+
 ### Profile Page
 <img width="1916" height="913" alt="image" src="https://github.com/user-attachments/assets/f2136e4d-a7c6-4a19-ab06-be0643101aea" />
 
@@ -24,11 +27,12 @@ This app enables users to seamlessly connect through private chats, delivering l
 ## Features
 
 Real-time messaging  
-- User authentication using google  
+- User authentication using google auth
 - Private chats using websockets
+- Shows unread messages and marks them as seen when chat is opened
 - Message timestamps
-- Image sharing 
-- Online/offline presence  
+- Image sharing
+- Online/offline presence 
 
 ---
 
