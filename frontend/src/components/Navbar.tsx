@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { debounce } from "lodash";
 import type User from "../interfaces/user_interface";
+import { baseUrl } from "../config/baseurl";
 
 interface NavbarProps {
   onUserSelect: (user: User | null) => void;
@@ -16,11 +17,6 @@ const Navbar = ({ onUserSelect }: NavbarProps) => {
   const location = useLocation();
   const [inputText, setInputText] = useState<string | null>("");
   const [searchResults, setSearchResults] = useState<User[]>([]);
-
-  const baseUrl =
-    import.meta.env.VITE_NODE_ENV === "development"
-      ? "http://localhost:3000"
-      : "/";
 
   const fetchUsers = async (query: string) => {
     if (!query) {
