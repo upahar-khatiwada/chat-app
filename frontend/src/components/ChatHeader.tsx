@@ -35,14 +35,14 @@ const ChatHeader = ({
       </Popup>
 
       <div className="flex gap-2">
-        <IoIosCall
+        {/* <IoIosCall
           size={40}
           className="p-2 cursor-pointer hover:bg-[#b99a88] hover:rounded-2xl transition-all duration-200"
         />
         <CiVideoOn
           size={40}
           className="p-2 cursor-pointer hover:bg-[#b99a88] hover:rounded-2xl transition-all duration-200"
-        />
+        /> */}
         <IoClose
           size={40}
           className="p-2 cursor-pointer hover:bg-red-400 hover:rounded-2xl transition-all duration-200"
