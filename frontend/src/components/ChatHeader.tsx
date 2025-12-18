@@ -1,5 +1,5 @@
-import { CiVideoOn } from "react-icons/ci";
-import { IoIosCall } from "react-icons/io";
+// import { CiVideoOn } from "react-icons/ci";
+// import { IoIosCall } from "react-icons/io";
 import { IoClose } from "react-icons/io5";
 import type User from "../interfaces/user_interface";
 import Popup from "reactjs-popup";
